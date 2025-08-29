@@ -1,4 +1,10 @@
-import { DotsIcon, SearchIcon } from "./Icons";
+import {
+  DotsIcon,
+  SearchIcon,
+  ArchiveIcon,
+  CameraIcon,
+  NewChatIcon,
+} from "./Icons";
 
 interface SidebarHeaderProps {
   searchQuery: string;
@@ -19,7 +25,10 @@ export function SidebarHeader({
         <h1 className="font-medium text-xl">WhatsApp</h1>
         <div className="flex items-center gap-2">
           <button className="p-2 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary">
-            <span className="text-lg">☀️</span>
+            <CameraIcon />
+          </button>
+          <button className="p-2 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary">
+            <NewChatIcon />
           </button>
           <button className="p-2 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary">
             <DotsIcon />
@@ -28,7 +37,7 @@ export function SidebarHeader({
       </div>
 
       {/* Search Bar */}
-      <div className="px-4 pb-3">
+      <div className="px-3 pb-3">
         <div className="relative">
           <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-wp-text-secondary">
             <SearchIcon />
@@ -44,7 +53,7 @@ export function SidebarHeader({
       </div>
 
       {/* Filter Tabs */}
-      <div className="px-3 pb-2">
+      <div className="px-3 pb-3">
         <div className="flex gap-1">
           {(["all", "unread", "favorites", "groups"] as const).map((filter) => (
             <button
@@ -60,6 +69,16 @@ export function SidebarHeader({
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Archived Section */}
+      <div className="px-3 pb-2">
+        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-wp-text-secondary/20">
+            <ArchiveIcon />
+          </div>
+          <span className="text-sm font-medium">Archived</span>
+        </button>
       </div>
     </div>
   );

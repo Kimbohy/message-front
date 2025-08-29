@@ -8,9 +8,29 @@ export function formatLastSeen(ts: number) {
   const msgDate = new Date(ts);
   const diffTime = now.getTime() - msgDate.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const diffMinutes = Math.floor(diffTime / (1000 * 60));
 
-  if (diffDays === 0) return formatTime(ts);
-  if (diffDays === 1) return "yesterday";
+  // Same day - show time
+  if (diffDays === 0) {
+    if (diffMinutes < 1) return "now";
+    if (diffMinutes < 60) return `${diffMinutes}m`;
+    return formatTime(ts);
+  }
+
+  // Yesterday
+  if (diffDays === 1) return "Yesterday";
+
+  // This week - show day name
   if (diffDays < 7) return msgDate.toLocaleDateString([], { weekday: "short" });
-  return msgDate.toLocaleDateString([], { month: "short", day: "numeric" });
+
+  // Older - show date
+  if (diffDays < 365)
+    return msgDate.toLocaleDateString([], { month: "short", day: "numeric" });
+
+  // Very old - show year too
+  return msgDate.toLocaleDateString([], {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
