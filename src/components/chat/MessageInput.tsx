@@ -19,12 +19,12 @@ export function MessageInput({
   return (
     <form
       onSubmit={onSend}
-      className="p-4 bg-wp-header-bg border-t border-wp-border"
+      className="px-4 py-3 bg-wp-header-bg border-t border-wp-border"
     >
-      <div className="flex items-end gap-3">
+      <div className="flex items-center gap-2">
         <button
           type="button"
-          className="p-2.5 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary"
+          className="p-2 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary"
         >
           <AttachIcon />
         </button>
@@ -36,12 +36,12 @@ export function MessageInput({
             onKeyDown={onKeyDown}
             placeholder="Type a message"
             rows={1}
-            className="w-full resize-none rounded-lg px-4 py-3 pr-12 outline-none text-sm bg-wp-input-bg border border-wp-border focus:border-wp-green text-wp-text-primary placeholder-wp-text-muted transition-all duration-200"
+            className="w-full resize-none rounded-lg px-3 py-2.5 pr-10 outline-none text-[15px] bg-wp-input-bg border-0 text-wp-text-primary placeholder-wp-text-muted transition-all duration-200"
             style={{ maxHeight: "120px" }}
           />
           <button
             type="button"
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1.5 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary"
           >
             <EmojiIcon />
           </button>
@@ -49,7 +49,7 @@ export function MessageInput({
         <button
           type="submit"
           disabled={!input.trim()}
-          className="p-3 rounded-full bg-wp-green hover:bg-wp-green-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-white"
+          className="p-2.5 rounded-full bg-wp-green hover:bg-wp-green-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-white flex items-center justify-center"
         >
           <SendIcon />
         </button>

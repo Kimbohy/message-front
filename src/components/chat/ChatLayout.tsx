@@ -8,7 +8,7 @@ export function ChatApp() {
     useMockChat();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<
-    "all" | "unread" | "favorites" | "groups"
+    "all" | "unread" | "favourites" | "groups"
   >("all");
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function ChatApp() {
     <div className="h-screen w-screen flex overflow-hidden bg-wp-dark-bg">
       <ChatSidebar
         chats={state.chats}
-        activeChatId={state.activeChatId}
+        activeChatId={state.activeChatId || ""}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         activeFilter={activeFilter}

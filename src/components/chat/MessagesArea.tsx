@@ -44,11 +44,11 @@ export function MessagesArea({ messages, selfUserId }: MessagesAreaProps) {
   }, [messages]);
 
   return (
-    <div className="flex-1 overflow-y-auto chat-wallpaper px-6 py-4">
+    <div className="flex-1 overflow-y-auto chat-wallpaper px-12 py-6">
       {dayGroups.map((group) => (
-        <div key={group.day} className="mb-8">
-          <div className="flex justify-center mb-6">
-            <span className="text-xs px-3 py-1.5 rounded-full bg-wp-header-bg text-wp-text-secondary shadow-sm">
+        <div key={group.day} className="mb-6">
+          <div className="flex justify-center mb-4">
+            <span className="text-[13px] px-3 py-1 rounded-lg bg-wp-header-bg/80 text-wp-text-secondary shadow-sm">
               {group.day}
             </span>
           </div>
