@@ -1,68 +1,384 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* WhatsApp exact colors and styling */
+@theme {
+  /* Exact WhatsApp colors from the screenshot */
+  --color-wp-green: #00a884;
+  --color-wp-green-dark: #008069;
+  --color-wp-dark-bg: #111b21;
+  --color-wp-header-bg: #202c33;
+  --color-wp-chat-bg: #0b141a;
+  --color-wp-hover: #2a3942;
+  --color-wp-dark-hover: #2a3942;
+  --color-wp-border: #3b4a54;
+  --color-wp-msg-out: #005c4b;
+  --color-wp-msg-in: #202c33;
+  --color-wp-text-primary: #e9edef;
+  --color-wp-text-secondary: #8696a0;
+  --color-wp-text-muted: #667781;
+  --color-wp-input-bg: #2a3942;
+  --color-wp-online: #00a884;
 }
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
+  background: var(--color-wp-dark-bg);
+  color: var(--color-wp-text-primary);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Simple scrollbar like WhatsApp */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #3b4a54;
+  border-radius: 3px;
 }
 
-button {
+/* Simple message bubbles like WhatsApp */
+.msg-bubble {
+  border-radius: 7.5px;
+  padding: 6px 7px 8px 9px;
+  margin: 2px 8px;
+  max-width: 65%;
+  word-wrap: break-word;
+  position: relative;
+}
+
+.msg-bubble-out {
+  background-color: var(--color-wp-msg-out);
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.msg-bubble-in {
+  background-color: var(--color-wp-msg-in);
+  margin-right: auto;
+  margin-left: 0;
+}
+
+/* Message tails */
+.msg-bubble-out::before {
+  content: "";
+  position: absolute;
+  right: -8px;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 8px solid var(--color-wp-msg-out);
+  border-bottom: 13px solid transparent;
+}
+
+.msg-bubble-in::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-right: 8px solid var(--color-wp-msg-in);
+  border-bottom: 13px solid transparent;
+}
+
+/* WhatsApp chat background pattern */
+.chat-wallpaper {
+  background-color: var(--color-wp-chat-bg);
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(139, 161, 174, 0.15) 1px,
+    transparent 0
+  );
+  background-size: 20px 20px;
+}
+
+/* Basic text utilities */
+.text-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Enhanced utilities and animations */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+/* Enhanced text clamping with better browser support */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Modern animations with improved easing */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.animate-slide-in-right {
+  animation: slideInRight 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+.animate-ripple {
+  animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pulse-green {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+.animate-pulse-green {
+  animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Enhanced status indicators with better visual feedback */
+.status-sending {
+  color: var(--color-wp-gray-400);
+  opacity: 0.7;
+}
+.status-sent {
+  color: var(--color-wp-gray-400);
+}
+.status-delivered {
+  color: var(--color-wp-blue);
+}
+.status-read {
+  color: var(--color-wp-blue);
+  font-weight: 600;
+}
+
+/* Glass effect for modern overlays */
+.glass-effect {
+  backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+@media (prefers-color-scheme: dark) {
+  .glass-effect {
+    background: rgba(17, 27, 33, 0.75);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Enhanced button styles */
+.btn-primary {
+  background: linear-gradient(
+    135deg,
+    var(--color-wp-green) 0%,
+    var(--color-wp-green-hover) 100%
+  );
+  color: white;
+  border: none;
+  border-radius: 50%;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(
+    135deg,
+    var(--color-wp-green-hover) 0%,
+    var(--color-wp-green-light) 100%
+  );
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(1);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Enhanced chat list item styling */
+.chat-item {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  margin: 0 8px;
+  position: relative;
+  overflow: hidden;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.chat-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 168, 132, 0.1),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.chat-item:hover::before {
+  transform: translateX(100%);
+}
+
+.chat-item:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-wp-gray-25) 0%,
+    var(--color-wp-gray-50) 100%
+  );
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-item.active {
+  background: linear-gradient(
+    135deg,
+    var(--color-wp-green) 0%,
+    var(--color-wp-green-hover) 100%
+  );
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+/* Enhanced avatar gradients */
+.avatar-gradient-1 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.avatar-gradient-2 {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+.avatar-gradient-3 {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+.avatar-gradient-4 {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+.avatar-gradient-5 {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+.avatar-gradient-6 {
+  background: linear-gradient(135deg, #ff8a80 0%, #ea4335 100%);
+}
+
+/* Enhanced header styling */
+.header-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-wp-teal) 0%,
+    var(--color-wp-teal-light) 100%
+  );
+  box-shadow: var(--shadow-header);
+}
+
+.wp-glass {
+  @apply backdrop-blur-md bg-white/70 dark:bg-[--color-wp-panel-dark]/60;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+/* Utility for multi-line clamp */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Simple fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
   }
-  a:hover {
-    color: #747bff;
+  to {
+    opacity: 1;
+    transform: none;
   }
-  button {
-    background-color: #f9f9f9;
+}
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* Message bubble tweaks for tails (pseudo elements) */
+.bubble-out::after,
+.bubble-in::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 8px;
+  height: 13px;
+  background: inherit;
+}
+.bubble-out::after {
+  right: -3px;
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+}
+.bubble-in::after {
+  left: -3px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+/* Dark mode media override for system preference */
+@media (prefers-color-scheme: dark) {
+  .system-dark\:shadow-elev-1 {
+    box-shadow: var(--shadow-elev-1);
   }
 }
