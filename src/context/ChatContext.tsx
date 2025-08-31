@@ -91,6 +91,39 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
     case "ADD_MESSAGE": {
       const message = action.payload;
       const chatMessages = state.messages[message.chatId] || [];
+
+      // Don't add if message already exists (avoid duplicates)
+      const messageExists = chatMessages.some((msg) => msg._id === message._id);
+      if (messageExists) {
+        return state;
+      }
+
+      // If this is a real message from server and we have a temp message with same content/sender, remove the temp one
+      if (!message._id.startsWith("temp-")) {
+        const filteredMessages = chatMessages.filter((msg) => {
+          // Remove temp messages that match this real message
+          return !(
+            (
+              msg._id.startsWith("temp-") &&
+              msg.senderId === message.senderId &&
+              msg.content === message.content &&
+              Math.abs(
+                new Date(msg.createdAt).getTime() -
+                  new Date(message.createdAt).getTime()
+              ) < 30000
+            ) // Within 30 seconds
+          );
+        });
+
+        return {
+          ...state,
+          messages: {
+            ...state.messages,
+            [message.chatId]: [...filteredMessages, message],
+          },
+        };
+      }
+
       return {
         ...state,
         messages: {
@@ -164,6 +197,8 @@ export function ChatProvider({ children }: ChatProviderProps) {
           content: socketMessage.content,
           createdAt: socketMessage.createdAt,
         };
+
+        // Just add the message - the ADD_MESSAGE reducer will handle deduplication
         dispatch({ type: "ADD_MESSAGE", payload: message });
       });
 
@@ -238,14 +273,17 @@ export function ChatProvider({ children }: ChatProviderProps) {
     (chatId: string, content: string) => {
       if (!state.isConnected || !user) return;
 
+      const timestamp = Date.now();
+      const tempId = `temp-${user._id}-${timestamp}`;
+
       // Optimistically add message to UI
       const tempMessage: Message = {
-        _id: `temp-${Date.now()}`,
+        _id: tempId,
         chatId,
         senderId: user._id,
         senderEmail: user.email,
         content,
-        createdAt: new Date().toISOString(),
+        createdAt: new Date(timestamp).toISOString(),
       };
 
       dispatch({ type: "ADD_MESSAGE", payload: tempMessage });
