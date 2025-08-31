@@ -27,6 +27,26 @@ body {
   padding: 0;
 }
 
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  /* Improve touch targets on mobile */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent zoom on input focus on iOS */
+  input,
+  textarea {
+    font-size: 16px;
+  }
+
+  /* Mobile-optimized scrollbars */
+  ::-webkit-scrollbar {
+    width: 2px;
+  }
+}
+
 /* Simple scrollbar like WhatsApp */
 ::-webkit-scrollbar {
   width: 6px;
@@ -47,6 +67,15 @@ body {
   max-width: 65%;
   word-wrap: break-word;
   position: relative;
+}
+
+/* Mobile optimization for message bubbles */
+@media (max-width: 768px) {
+  .msg-bubble {
+    max-width: 80%;
+    margin: 2px 4px;
+    padding: 8px 10px 9px 12px;
+  }
 }
 
 .msg-bubble-out {

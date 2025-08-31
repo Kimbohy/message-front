@@ -10,6 +10,7 @@ interface ChatAreaProps {
   activeMessages: Message[];
   selfUserId: string;
   onSendMessage: (chatId: string, content: string) => void;
+  onBackToSidebar?: () => void;
   isLoading?: boolean;
 }
 
@@ -18,6 +19,7 @@ export function ChatArea({
   activeMessages,
   selfUserId,
   onSendMessage,
+  onBackToSidebar,
   isLoading = false,
 }: ChatAreaProps) {
   const [input, setInput] = useState("");
@@ -44,7 +46,7 @@ export function ChatArea({
 
   return (
     <main className="flex-1 flex flex-col bg-wp-chat-bg">
-      <ChatHeader activeChat={activeChat} />
+      <ChatHeader activeChat={activeChat} onBackToSidebar={onBackToSidebar} />
       <MessagesArea messages={activeMessages} selfUserId={selfUserId} />
       <MessageInput
         input={input}

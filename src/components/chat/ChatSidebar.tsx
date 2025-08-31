@@ -52,7 +52,7 @@ export function ChatSidebar({
   }, [chats, searchQuery, activeFilter]);
 
   return (
-    <aside className="hidden md:flex flex-col w-[420px] border-r border-wp-border bg-wp-header-bg">
+    <aside className="flex flex-col w-full md:w-[420px] border-r border-wp-border bg-wp-header-bg h-full">
       <SidebarHeader
         searchQuery={searchQuery}
         onSearchChange={onSearchChange}

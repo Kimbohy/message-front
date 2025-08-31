@@ -26,6 +26,16 @@ class SocketService {
   private socket: Socket | null = null;
   private isConnected = false;
 
+  private getSocketUrl(): string {
+    if (typeof window !== "undefined") {
+      const { protocol, hostname } = window.location;
+      // Use the same host as the frontend but port 3002 for WebSocket
+      return `${protocol}//${hostname}:3002`;
+    }
+    // Fallback for SSR or other environments
+    return "http://localhost:3002";
+  }
+
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       const token = apiService.getToken();
@@ -35,7 +45,7 @@ class SocketService {
         return;
       }
 
-      this.socket = io("http://localhost:3002", {
+      this.socket = io(this.getSocketUrl(), {
         auth: {
           token,
         },

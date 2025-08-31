@@ -70,21 +70,21 @@ export function SignUp({
     <div className="min-h-screen bg-wp-dark-bg flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-wp-green rounded-full flex items-center justify-center mx-auto mb-6">
-            <span className="text-3xl">💬</span>
+        <div className="text-center mb-6 md:mb-8">
+          <div className="w-16 h-16 md:w-20 md:h-20 bg-wp-green rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+            <span className="text-2xl md:text-3xl">💬</span>
           </div>
-          <h1 className="text-3xl font-light text-wp-text-primary mb-2">
+          <h1 className="text-2xl md:text-3xl font-light text-wp-text-primary mb-2">
             Join WhatsApp
           </h1>
-          <p className="text-wp-text-secondary">
+          <p className="text-sm md:text-base text-wp-text-secondary px-4">
             Create your account to get started
           </p>
         </div>
 
         {/* Form */}
-        <div className="bg-wp-header-bg rounded-lg p-8 border border-wp-border">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-wp-header-bg rounded-lg p-6 md:p-8 border border-wp-border mx-4 md:mx-0">
+          <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
             <div>
               <label className="block text-sm font-medium text-wp-text-primary mb-2">
                 Full Name
@@ -172,7 +172,7 @@ export function SignUp({
         </div>
 
         {/* Bottom text */}
-        <div className="text-center mt-8">
+        <div className="text-center mt-6 md:mt-8 px-4">
           <p className="text-xs text-wp-text-secondary">
             By creating an account, you agree to our Terms of Service and
             Privacy Policy

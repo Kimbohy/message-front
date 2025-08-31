@@ -1,4 +1,15 @@
-const API_BASE_URL = "http://localhost:3001/api";
+// Get the current host and use it for API calls
+const getApiBaseUrl = () => {
+  if (typeof window !== "undefined") {
+    const { protocol, hostname } = window.location;
+    // Use the same host as the frontend but port 3001 for API
+    return `${protocol}//${hostname}:3001/api`;
+  }
+  // Fallback for SSR or other environments
+  return "http://localhost:3001/api";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export interface ApiResponse<T = any> {
   data?: T;
