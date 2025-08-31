@@ -1,15 +1,17 @@
 import { useMemo } from "react";
 import { SidebarHeader } from "./SidebarHeader";
 import { ChatListItem } from "./ChatListItem";
+import type { Chat } from "../../services/api";
 
 interface ChatSidebarProps {
-  chats: any[];
+  chats: Chat[];
   activeChatId: string;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   activeFilter: "all" | "unread" | "favourites" | "groups";
   onFilterChange: (filter: "all" | "unread" | "favourites" | "groups") => void;
   onChatSelect: (chatId: string) => void;
+  isLoading?: boolean;
 }
 
 export function ChatSidebar({
@@ -20,25 +22,28 @@ export function ChatSidebar({
   activeFilter,
   onFilterChange,
   onChatSelect,
+  isLoading = false,
 }: ChatSidebarProps) {
   const filteredChats = useMemo(() => {
     let filteredChats = chats;
 
     // Apply search filter
     if (searchQuery.trim()) {
-      filteredChats = filteredChats.filter((chat: any) =>
-        chat.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      filteredChats = filteredChats.filter((chat) => {
+        // Search in chat name or participant names
+        const chatName = chat.name || "";
+        const participantNames = chat.participants.map((p) => p.name).join(" ");
+        const searchText = `${chatName} ${participantNames}`.toLowerCase();
+        return searchText.includes(searchQuery.toLowerCase());
+      });
     }
 
     // Apply tab filter
     switch (activeFilter) {
       case "unread":
-        return filteredChats.filter((chat: any) => chat.unreadCount > 0);
-      case "favourites":
-        return filteredChats.filter((chat: any) => chat.isFavorite);
+        return filteredChats.filter((chat) => chat.lastMessage);
       case "groups":
-        return filteredChats.filter((chat: any) => chat.isGroup);
+        return filteredChats.filter((chat) => chat.type === "GROUP");
       default:
         return filteredChats;
     }
@@ -55,15 +60,29 @@ export function ChatSidebar({
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto scrollbar-thin">
-        {filteredChats.map((chat: any, index: number) => (
-          <ChatListItem
-            key={chat.id}
-            chat={chat}
-            isActive={chat.id === activeChatId}
-            onClick={() => onChatSelect(chat.id)}
-            isLastItem={index === filteredChats.length - 1}
-          />
-        ))}
+        {isLoading && chats.length === 0 ? (
+          <div className="flex items-center justify-center h-32">
+            <div className="text-wp-text-secondary text-sm">
+              Loading chats...
+            </div>
+          </div>
+        ) : filteredChats.length === 0 ? (
+          <div className="flex items-center justify-center h-32">
+            <div className="text-wp-text-secondary text-sm">
+              {searchQuery ? "No chats found" : "No chats yet"}
+            </div>
+          </div>
+        ) : (
+          filteredChats.map((chat, index) => (
+            <ChatListItem
+              key={chat._id}
+              chat={chat}
+              isActive={chat._id === activeChatId}
+              onClick={() => onChatSelect(chat._id)}
+              isLastItem={index === filteredChats.length - 1}
+            />
+          ))
+        )}
       </div>
     </aside>
   );

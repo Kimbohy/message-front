@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SignIn } from "./SignIn";
 import { SignUp } from "./SignUp";
+import { useAuth } from "../../context/AuthContext";
 
 interface AuthProps {
   initialMode?: "signin" | "signup";
@@ -9,18 +10,19 @@ interface AuthProps {
 
 export function Auth({ initialMode = "signin", onAuthenticated }: AuthProps) {
   const [mode, setMode] = useState<"signin" | "signup">(initialMode);
+  const { login, register, error, isLoading, clearError } = useAuth();
 
   const handleSignIn = async (email: string, password: string) => {
-    // Simulate authentication
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      clearError();
+      await login(email, password);
 
-    // Mock validation (in a real app, you'd validate credentials with your backend)
-    if (password.length < 6) {
-      throw new Error("Invalid credentials");
-    }
-
-    if (onAuthenticated) {
-      onAuthenticated({ email });
+      if (onAuthenticated) {
+        onAuthenticated({ email });
+      }
+    } catch (error) {
+      // Error is handled by the auth context
+      throw error;
     }
   };
 
@@ -29,16 +31,16 @@ export function Auth({ initialMode = "signin", onAuthenticated }: AuthProps) {
     email: string,
     password: string
   ) => {
-    // Simulate account creation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      clearError();
+      await register(name, email, password);
 
-    // Mock validation (in a real app, you'd create the account with your backend)
-    if (password.length < 6) {
-      throw new Error("Password too short");
-    }
-
-    if (onAuthenticated) {
-      onAuthenticated({ name, email });
+      if (onAuthenticated) {
+        onAuthenticated({ name, email });
+      }
+    } catch (error) {
+      // Error is handled by the auth context
+      throw error;
     }
   };
 
@@ -47,6 +49,8 @@ export function Auth({ initialMode = "signin", onAuthenticated }: AuthProps) {
       <SignUp
         onSignUp={handleSignUp}
         onSwitchToSignIn={() => setMode("signin")}
+        error={error}
+        isLoading={isLoading}
       />
     );
   }
@@ -55,6 +59,8 @@ export function Auth({ initialMode = "signin", onAuthenticated }: AuthProps) {
     <SignIn
       onSignIn={handleSignIn}
       onSwitchToSignUp={() => setMode("signup")}
+      error={error}
+      isLoading={isLoading}
     />
   );
 }

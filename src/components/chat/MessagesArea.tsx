@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef } from "react";
 import { MessageBubble } from "./MessageBubble";
-import type { ChatMessage } from "./ChatTypes";
+import type { Message } from "../../services/api";
 
 interface MessagesAreaProps {
-  messages: ChatMessage[];
+  messages: Message[];
   selfUserId: string;
 }
 
@@ -15,11 +15,11 @@ export function MessagesArea({ messages, selfUserId }: MessagesAreaProps) {
   }, [messages.length]);
 
   const dayGroups = useMemo(() => {
-    const groups: { day: string; items: ChatMessage[] }[] = [];
-    let byDay: Record<string, ChatMessage[]> = {};
+    const groups: { day: string; items: Message[] }[] = [];
+    let byDay: Record<string, Message[]> = {};
 
-    messages.forEach((m: any) => {
-      const day = new Date(m.timestamp).toDateString();
+    messages.forEach((m) => {
+      const day = new Date(m.createdAt).toDateString();
       (byDay[day] ||= []).push(m);
     });
 
@@ -56,7 +56,7 @@ export function MessagesArea({ messages, selfUserId }: MessagesAreaProps) {
             const isOutgoing = message.senderId === selfUserId;
             return (
               <MessageBubble
-                key={message.id}
+                key={message._id}
                 message={message}
                 isOutgoing={isOutgoing}
               />

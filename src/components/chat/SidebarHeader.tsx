@@ -1,4 +1,6 @@
 import { DotsIcon, SearchIcon, CameraIcon, NewChatIcon } from "./Icons";
+import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
 
 interface SidebarHeaderProps {
   searchQuery: string;
@@ -13,21 +15,55 @@ export function SidebarHeader({
   activeFilter,
   onFilterChange,
 }: SidebarHeaderProps) {
+  const { logout, user } = useAuth();
+  const [showMenu, setShowMenu] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setShowMenu(false);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <div className="bg-wp-header-bg">
       {/* Main Header */}
       <div className="h-[60px] flex items-center justify-between px-4 text-wp-text-primary">
-        <h1 className="font-medium text-[19px]">WhatsApp</h1>
-        <div className="flex items-center gap-1">
+        <div>
+          <h1 className="font-medium text-[19px]">WhatsApp</h1>
+          {user && (
+            <p className="text-[12px] text-wp-text-secondary">
+              {user.name} ({user.email})
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-1 relative">
           <button className="p-2 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary">
             <CameraIcon />
           </button>
           <button className="p-2 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary">
             <NewChatIcon />
           </button>
-          <button className="p-2 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary">
+          <button
+            onClick={() => setShowMenu(!showMenu)}
+            className="p-2 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary"
+          >
             <DotsIcon />
           </button>
+
+          {/* Dropdown Menu */}
+          {showMenu && (
+            <div className="absolute top-full right-0 mt-2 w-48 bg-wp-header-bg border border-wp-border rounded-lg shadow-lg z-10">
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 text-sm text-wp-text-primary hover:bg-wp-hover rounded-lg"
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

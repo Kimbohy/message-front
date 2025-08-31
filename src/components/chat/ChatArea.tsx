@@ -3,13 +3,14 @@ import { ChatHeader } from "./ChatHeader";
 import { MessagesArea } from "./MessagesArea";
 import { MessageInput } from "./MessageInput";
 import { EmptyState } from "./EmptyState";
-import type { ChatMessage } from "./ChatTypes";
+import type { Chat, Message } from "../../services/api";
 
 interface ChatAreaProps {
-  activeChat: any;
-  activeMessages: ChatMessage[];
+  activeChat: Chat | null;
+  activeMessages: Message[];
   selfUserId: string;
   onSendMessage: (chatId: string, content: string) => void;
+  isLoading?: boolean;
 }
 
 export function ChatArea({
@@ -17,14 +18,15 @@ export function ChatArea({
   activeMessages,
   selfUserId,
   onSendMessage,
+  isLoading = false,
 }: ChatAreaProps) {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || !activeChat?.id) return;
-    onSendMessage(activeChat.id, input.trim());
+    if (!input.trim() || !activeChat?._id || isLoading) return;
+    onSendMessage(activeChat._id, input.trim());
     setInput("");
     inputRef.current?.focus();
   };

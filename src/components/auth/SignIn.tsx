@@ -6,13 +6,23 @@ import { EmailIcon, LockIcon } from "../chat/Icons";
 interface SignInProps {
   onSignIn?: (email: string, password: string) => Promise<void>;
   onSwitchToSignUp?: () => void;
+  error?: string | null;
+  isLoading?: boolean;
 }
 
-export function SignIn({ onSignIn, onSwitchToSignUp }: SignInProps) {
+export function SignIn({
+  onSignIn,
+  onSwitchToSignUp,
+  error: externalError,
+  isLoading: externalLoading,
+}: SignInProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const isSubmitting = loading || externalLoading;
+  const displayError = error || externalError;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +43,9 @@ export function SignIn({ onSignIn, onSwitchToSignUp }: SignInProps) {
         console.log("Sign in:", { email, password });
       }
     } catch (err) {
-      setError("Invalid email or password");
+      const errorMessage =
+        err instanceof Error ? err.message : "Invalid email or password";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -86,19 +98,19 @@ export function SignIn({ onSignIn, onSwitchToSignUp }: SignInProps) {
               />
             </div>
 
-            {error && (
+            {displayError && (
               <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-                {error}
+                {displayError}
               </div>
             )}
 
             <Button
               type="submit"
               variant="primary"
-              loading={loading}
+              loading={isSubmitting}
               className="w-full"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {isSubmitting ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 

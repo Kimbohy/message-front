@@ -6,15 +6,25 @@ import { EmailIcon, LockIcon, UserIcon } from "../chat/Icons";
 interface SignUpProps {
   onSignUp?: (name: string, email: string, password: string) => Promise<void>;
   onSwitchToSignIn?: () => void;
+  error?: string | null;
+  isLoading?: boolean;
 }
 
-export function SignUp({ onSignUp, onSwitchToSignIn }: SignUpProps) {
+export function SignUp({
+  onSignUp,
+  onSwitchToSignIn,
+  error: externalError,
+  isLoading: externalLoading,
+}: SignUpProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const isSubmitting = loading || externalLoading;
+  const displayError = error || externalError;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +56,11 @@ export function SignUp({ onSignUp, onSwitchToSignIn }: SignUpProps) {
         console.log("Sign up:", { name, email, password });
       }
     } catch (err) {
-      setError("Failed to create account. Please try again.");
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to create account. Please try again.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -127,19 +141,19 @@ export function SignUp({ onSignUp, onSwitchToSignIn }: SignUpProps) {
               />
             </div>
 
-            {error && (
+            {displayError && (
               <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-                {error}
+                {displayError}
               </div>
             )}
 
             <Button
               type="submit"
               variant="primary"
-              loading={loading}
+              loading={isSubmitting}
               className="w-full"
             >
-              {loading ? "Creating account..." : "Create Account"}
+              {isSubmitting ? "Creating account..." : "Create Account"}
             </Button>
           </form>
 

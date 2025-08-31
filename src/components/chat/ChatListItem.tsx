@@ -1,19 +1,8 @@
-import { formatLastSeen } from "./utils";
+import type { Chat } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 
 interface ChatListItemProps {
-  chat: {
-    id: string;
-    name: string;
-    emoji: string;
-    isOnline: boolean;
-    unreadCount: number;
-    lastMessage?: {
-      content: string;
-      timestamp: number;
-    };
-    isGroup?: boolean;
-    avatar?: string;
-  };
+  chat: Chat;
   isActive: boolean;
   onClick: () => void;
   isLastItem?: boolean;
@@ -43,7 +32,51 @@ export function ChatListItem({
   onClick,
   isLastItem = false,
 }: ChatListItemProps) {
-  const avatarColor = getAvatarColor(chat.name);
+  const { user: currentUser } = useAuth();
+
+  // Determine display name for the chat
+  const getDisplayName = () => {
+    if (chat.type === "GROUP") {
+      return chat.name || `Group (${chat.participants.length} members)`;
+    } else {
+      // For private chats, show the other participant's name
+      const otherParticipant = chat.participants.find(
+        (p) => p._id !== currentUser?._id
+      );
+      return otherParticipant?.name || "Unknown User";
+    }
+  };
+
+  const displayName = getDisplayName();
+  const avatarColor = getAvatarColor(displayName);
+
+  // Get avatar initials
+  const getInitials = () => {
+    return displayName.slice(0, 2).toUpperCase();
+  };
+
+  // Format last message time
+  const formatMessageTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+
+    if (diffHours < 24) {
+      return date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+    } else if (diffHours < 168) {
+      // 7 days
+      return date.toLocaleDateString("en-US", { weekday: "short" });
+    } else {
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    }
+  };
 
   return (
     <div
@@ -53,20 +86,14 @@ export function ChatListItem({
       }`}
     >
       <div className="relative flex-shrink-0">
-        {chat.avatar ? (
-          <img
-            src={chat.avatar}
-            alt={chat.name}
-            className="w-[49px] h-[49px] rounded-full object-cover"
-          />
-        ) : (
-          <div
-            className={`w-[49px] h-[49px] rounded-full flex items-center justify-center text-white font-medium text-[18px] ${avatarColor}`}
-          >
-            {chat.emoji || chat.name.slice(0, 2).toUpperCase()}
-          </div>
-        )}
-        {chat.isOnline && (
+        <div
+          className={`w-[49px] h-[49px] rounded-full flex items-center justify-center text-white font-medium text-[18px] ${avatarColor}`}
+        >
+          {getInitials()}
+        </div>
+
+        {/* Online indicator for private chats - placeholder for now */}
+        {chat.type === "PRIVATE" && (
           <div className="absolute -bottom-0 -right-0 w-3 h-3 bg-wp-online rounded-full border-2 border-wp-header-bg"></div>
         )}
       </div>
@@ -79,31 +106,41 @@ export function ChatListItem({
         <div className="flex items-start justify-between mb-1">
           <div className="flex items-center gap-1 flex-1 min-w-0">
             <h3 className="font-normal truncate text-wp-text-primary text-[17px] leading-tight">
-              {chat.name}
+              {displayName}
             </h3>
-            {chat.isGroup && (
+            {chat.type === "GROUP" && (
               <span className="text-wp-text-secondary text-xs">~</span>
             )}
           </div>
           {chat.lastMessage && (
             <span className="text-[12px] text-wp-text-secondary flex-shrink-0 ml-3 mt-0.5">
-              {formatLastSeen(chat.lastMessage.timestamp)}
+              {formatMessageTime(chat.lastMessage.createdAt)}
             </span>
           )}
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 flex-1 min-w-0">
             <p className="text-[14px] truncate text-wp-text-secondary leading-tight">
-              {chat.lastMessage?.content || "No messages yet"}
+              {chat.lastMessage ? (
+                <>
+                  {chat.lastMessage.senderEmail === currentUser?.email
+                    ? "You: "
+                    : ""}
+                  {chat.lastMessage.content}
+                </>
+              ) : (
+                "No messages yet"
+              )}
             </p>
           </div>
-          {chat.unreadCount && chat.unreadCount > 0 && (
-            <div className="flex items-center gap-1 flex-shrink-0 ml-3">
-              <span className="min-w-[20px] h-[20px] flex items-center justify-center text-[12px] font-semibold text-white rounded-full px-1.5 bg-wp-green">
-                {chat.unreadCount}
-              </span>
-            </div>
-          )}
+
+          {/* Unread indicator - placeholder for now */}
+          {chat.lastMessage &&
+            chat.lastMessage.senderEmail !== currentUser?.email && (
+              <div className="flex items-center gap-1 flex-shrink-0 ml-3">
+                <span className="w-2 h-2 bg-wp-green rounded-full"></span>
+              </div>
+            )}
         </div>
       </div>
     </div>
