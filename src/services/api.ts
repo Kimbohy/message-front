@@ -60,6 +60,23 @@ export interface CreateChatRequest {
   name?: string;
 }
 
+export interface StartChatByEmailRequest {
+  recipientEmail: string;
+  initialMessage?: string;
+}
+
+export interface StartChatByEmailResponse {
+  success: boolean;
+  chat: {
+    _id: string;
+    type: "GROUP" | "PRIVATE";
+    participants: string[];
+    createdAt: string;
+    updatedAt: string;
+  };
+  message: string;
+}
+
 class ApiService {
   private baseUrl = API_BASE_URL;
   private token: string | null = null;
@@ -170,6 +187,15 @@ class ApiService {
 
   async getMessages(chatId: string): Promise<Message[]> {
     return this.request<Message[]>(`/chat/${chatId}/messages`);
+  }
+
+  async startChatByEmail(
+    data: StartChatByEmailRequest
+  ): Promise<StartChatByEmailResponse> {
+    return this.request<StartChatByEmailResponse>("/chat/start-by-email", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
   }
 }
 

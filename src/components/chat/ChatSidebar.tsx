@@ -11,6 +11,7 @@ interface ChatSidebarProps {
   activeFilter: "all" | "unread" | "favourites" | "groups";
   onFilterChange: (filter: "all" | "unread" | "favourites" | "groups") => void;
   onChatSelect: (chatId: string) => void;
+  onChatStarted?: () => void;
   isLoading?: boolean;
 }
 
@@ -22,6 +23,7 @@ export function ChatSidebar({
   activeFilter,
   onFilterChange,
   onChatSelect,
+  onChatStarted,
   isLoading = false,
 }: ChatSidebarProps) {
   const filteredChats = useMemo(() => {
@@ -56,6 +58,7 @@ export function ChatSidebar({
         onSearchChange={onSearchChange}
         activeFilter={activeFilter}
         onFilterChange={onFilterChange}
+        onChatStarted={onChatStarted}
       />
 
       {/* Chat List */}

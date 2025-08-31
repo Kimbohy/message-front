@@ -1,12 +1,15 @@
 import { DotsIcon, SearchIcon, CameraIcon, NewChatIcon } from "./Icons";
 import { useAuth } from "../../context/AuthContext";
 import { useState } from "react";
+import { StartChatModal } from "./StartChatModal";
+import { apiService } from "../../services/api";
 
 interface SidebarHeaderProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   activeFilter: "all" | "unread" | "favourites" | "groups";
   onFilterChange: (filter: "all" | "unread" | "favourites" | "groups") => void;
+  onChatStarted?: () => void;
 }
 
 export function SidebarHeader({
@@ -14,9 +17,12 @@ export function SidebarHeader({
   onSearchChange,
   activeFilter,
   onFilterChange,
+  onChatStarted,
 }: SidebarHeaderProps) {
   const { logout, user } = useAuth();
   const [showMenu, setShowMenu] = useState(false);
+  const [showStartChatModal, setShowStartChatModal] = useState(false);
+  const [isStartingChat, setIsStartingChat] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -24,6 +30,24 @@ export function SidebarHeader({
       setShowMenu(false);
     } catch (error) {
       console.error("Logout failed:", error);
+    }
+  };
+
+  const handleStartChat = async (email: string, message?: string) => {
+    setIsStartingChat(true);
+    try {
+      await apiService.startChatByEmail({
+        recipientEmail: email,
+        initialMessage: message,
+      });
+
+      // Notify parent component to refresh chat list
+      onChatStarted?.();
+    } catch (error: any) {
+      console.error("Failed to start chat:", error);
+      throw error; // Re-throw to let modal handle the error display
+    } finally {
+      setIsStartingChat(false);
     }
   };
 
@@ -43,7 +67,11 @@ export function SidebarHeader({
           <button className="p-2 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary">
             <CameraIcon />
           </button>
-          <button className="p-2 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary">
+          <button
+            onClick={() => setShowStartChatModal(true)}
+            className="p-2 rounded-full hover:bg-wp-hover transition-all duration-200 text-wp-text-secondary hover:text-wp-text-primary"
+            title="Start new chat"
+          >
             <NewChatIcon />
           </button>
           <button
@@ -103,6 +131,14 @@ export function SidebarHeader({
           )}
         </div>
       </div>
+
+      {/* Start Chat Modal */}
+      <StartChatModal
+        isOpen={showStartChatModal}
+        onClose={() => setShowStartChatModal(false)}
+        onSubmit={handleStartChat}
+        isLoading={isStartingChat}
+      />
     </div>
   );
 }

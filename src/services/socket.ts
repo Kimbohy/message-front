@@ -104,6 +104,10 @@ class SocketService {
     this.socket?.on("chatLeft", callback);
   }
 
+  onChatStarted(callback: (data: { success: boolean; chat: any }) => void) {
+    this.socket?.on("chatStarted", callback);
+  }
+
   // Chat actions
   getChatList() {
     if (this.socket) {
@@ -129,6 +133,12 @@ class SocketService {
     }
   }
 
+  startChatByEmail(recipientEmail: string, initialMessage?: string) {
+    if (this.socket) {
+      this.socket.emit("startChatByEmail", { recipientEmail, initialMessage });
+    }
+  }
+
   // Remove specific listeners
   offMessage(callback?: (message: SocketMessage) => void) {
     this.socket?.off("message", callback);
@@ -144,6 +154,10 @@ class SocketService {
 
   offChatListInitial(callback?: (chats: Chat[]) => void) {
     this.socket?.off("chatListInitial", callback);
+  }
+
+  offChatStarted(callback?: (data: { success: boolean; chat: any }) => void) {
+    this.socket?.off("chatStarted", callback);
   }
 }
 

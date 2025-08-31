@@ -13,6 +13,7 @@ export function ChatApp() {
     error,
     setActiveChat,
     sendMessage,
+    loadChats,
     clearError,
   } = useChat();
   const { user } = useAuth();
@@ -76,6 +77,7 @@ export function ChatApp() {
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
         onChatSelect={setActiveChat}
+        onChatStarted={loadChats}
         isLoading={isLoading}
       />
 
