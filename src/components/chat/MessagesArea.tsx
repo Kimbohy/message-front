@@ -44,7 +44,7 @@ export function MessagesArea({ messages, selfUserId }: MessagesAreaProps) {
   }, [messages]);
 
   return (
-    <div className="flex-1 overflow-y-auto chat-wallpaper px-4 md:px-12 py-4 md:py-6">
+    <div className="flex-1 overflow-y-auto chat-wallpaper px-4 md:px-12 py-4 md:py-6 min-h-0">
       {dayGroups.map((group) => (
         <div key={group.day} className="mb-4 md:mb-6">
           <div className="flex justify-center mb-3 md:mb-4">

@@ -19,7 +19,7 @@ export function MessageInput({
   return (
     <form
       onSubmit={onSend}
-      className="px-4 py-3 bg-wp-header-bg border-t border-wp-border"
+      className="px-4 py-3 bg-wp-header-bg border-t border-wp-border flex-shrink-0"
     >
       <div className="flex items-center gap-2">
         <button

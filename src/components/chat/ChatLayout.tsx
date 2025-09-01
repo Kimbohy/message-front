@@ -106,7 +106,7 @@ export function ChatApp() {
       {/* Main Chat Area */}
       <div
         className={`
-        flex-1 flex flex-col
+        flex-1 flex flex-col h-full
         ${activeChatId ? "block" : "hidden md:block"}
       `}
       >

@@ -42,7 +42,7 @@ export function ChatHeader({ activeChat, onBackToSidebar }: ChatHeaderProps) {
   };
 
   return (
-    <header className="h-[60px] flex items-center gap-4 px-4 md:px-6 border-b border-wp-border bg-wp-header-bg">
+    <header className="h-[60px] flex items-center gap-4 px-4 md:px-6 border-b border-wp-border bg-wp-header-bg flex-shrink-0">
       {/* Mobile Back Button - Only show when there's an active chat */}
       {activeChat && onBackToSidebar && (
         <button

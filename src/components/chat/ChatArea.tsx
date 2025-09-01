@@ -45,7 +45,7 @@ export function ChatArea({
   }
 
   return (
-    <main className="flex-1 flex flex-col bg-wp-chat-bg">
+    <main className="flex-1 flex flex-col bg-wp-chat-bg h-full">
       <ChatHeader activeChat={activeChat} onBackToSidebar={onBackToSidebar} />
       <MessagesArea messages={activeMessages} selfUserId={selfUserId} />
       <MessageInput
