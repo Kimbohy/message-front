@@ -18,6 +18,7 @@ export interface ChatUpdate {
     senderEmail: string;
     senderId: string;
     createdAt: string;
+    updatedAt: string;
   };
   updatedAt: string;
 }

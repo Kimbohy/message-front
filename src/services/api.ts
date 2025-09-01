@@ -33,6 +33,7 @@ export interface User {
   email: string;
   name: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface AuthResponse {
@@ -49,8 +50,8 @@ export interface Chat {
   lastMessage?: {
     content: string;
     senderId: string;
-    senderEmail: string;
     createdAt: string;
+    updatedAt: string;
   };
   createdAt: string;
   updatedAt: string;
@@ -60,7 +61,6 @@ export interface Message {
   _id: string;
   chatId: string;
   senderId: string;
-  senderEmail: string;
   content: string;
   createdAt: string;
 }

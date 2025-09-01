@@ -185,6 +185,8 @@ export function ChatProvider({ children }: ChatProviderProps) {
 
       // Set up socket event listeners
       socketService.onChatListInitial((chats) => {
+        console.log("Received initial chat list", chats);
+
         dispatch({ type: "SET_CHATS", payload: chats });
       });
 
@@ -193,7 +195,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
           _id: socketMessage._id,
           chatId: socketMessage.chatId,
           senderId: socketMessage.senderId,
-          senderEmail: socketMessage.senderEmail,
+          // senderEmail: socketMessage.senderEmail,
           content: socketMessage.content,
           createdAt: socketMessage.createdAt,
         };
@@ -281,7 +283,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
         _id: tempId,
         chatId,
         senderId: user._id,
-        senderEmail: user.email,
+        // senderEmail: user.email,
         content,
         createdAt: new Date(timestamp).toISOString(),
       };
