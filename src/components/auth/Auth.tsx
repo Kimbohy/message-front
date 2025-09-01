@@ -48,7 +48,10 @@ export function Auth({ initialMode = "signin", onAuthenticated }: AuthProps) {
     return (
       <SignUp
         onSignUp={handleSignUp}
-        onSwitchToSignIn={() => setMode("signin")}
+        onSwitchToSignIn={() => {
+          clearError();
+          setMode("signin");
+        }}
         error={error}
         isLoading={isLoading}
       />
@@ -58,7 +61,10 @@ export function Auth({ initialMode = "signin", onAuthenticated }: AuthProps) {
   return (
     <SignIn
       onSignIn={handleSignIn}
-      onSwitchToSignUp={() => setMode("signup")}
+      onSwitchToSignUp={() => {
+        clearError();
+        setMode("signup");
+      }}
       error={error}
       isLoading={isLoading}
     />

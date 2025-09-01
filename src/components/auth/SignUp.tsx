@@ -44,6 +44,16 @@ export function SignUp({
       return;
     }
 
+    // password must have at least one number, one uppercase letter, one lowercase letter and one special character
+    const passwordStrength =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/.test(password);
+    if (!passwordStrength) {
+      setError(
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+      );
+      return;
+    }
+
     setLoading(true);
     setError("");
 

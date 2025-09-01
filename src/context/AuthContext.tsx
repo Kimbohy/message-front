@@ -86,6 +86,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       dispatch({ type: "AUTH_START" });
       const response = await apiService.login({ email, password });
+      console.log(response);
+
       dispatch({ type: "AUTH_SUCCESS", payload: response.user });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Login failed";
