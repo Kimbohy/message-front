@@ -1,5 +1,6 @@
 import type { Chat } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
 
 interface ChatListItemProps {
   chat: Chat;
@@ -33,6 +34,11 @@ export function ChatListItem({
   isLastItem = false,
 }: ChatListItemProps) {
   const { user: currentUser } = useAuth();
+
+  const [isLastMessageSeen, setIsLastMessageSeen] = useState<boolean>(
+    (currentUser && chat.lastMessage?.seenBy?.includes(currentUser?._id)) ||
+      false
+  );
 
   // Determine display name for the chat
   const getDisplayName = () => {
@@ -78,9 +84,14 @@ export function ChatListItem({
     }
   };
 
+  const handleClick = () => {
+    setIsLastMessageSeen(true);
+    onClick();
+  };
+
   return (
     <div
-      onClick={onClick}
+      onClick={handleClick}
       className={`flex items-center gap-3 px-3 py-3 cursor-pointer transition-colors hover:bg-wp-hover ${
         isActive ? "bg-wp-dark-hover" : ""
       }`}
@@ -123,7 +134,7 @@ export function ChatListItem({
             <p className="text-[14px] truncate text-wp-text-secondary leading-tight">
               {chat.lastMessage ? (
                 <>
-                  {chat.lastMessage.senderEmail === currentUser?.email
+                  {chat.lastMessage.senderId === currentUser?._id
                     ? "You: "
                     : ""}
                   {chat.lastMessage.content}
@@ -136,7 +147,8 @@ export function ChatListItem({
 
           {/* Unread indicator - placeholder for now */}
           {chat.lastMessage &&
-            chat.lastMessage.senderEmail !== currentUser?.email && (
+            chat.lastMessage.senderId !== currentUser?._id &&
+            !isLastMessageSeen && (
               <div className="flex items-center gap-1 flex-shrink-0 ml-3">
                 <span className="w-2 h-2 bg-wp-green rounded-full"></span>
               </div>

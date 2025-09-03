@@ -52,6 +52,7 @@ export interface Chat {
     senderId: string;
     createdAt: string;
     updatedAt: string;
+    seenBy?: string[]; // Array of user IDs who have seen the last message
   };
   createdAt: string;
   updatedAt: string;
@@ -63,6 +64,7 @@ export interface Message {
   senderId: string;
   content: string;
   createdAt: string;
+  seenBy?: string[]; // Array of user IDs who have seen the message
 }
 
 export interface CreateChatRequest {

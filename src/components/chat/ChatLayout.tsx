@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useChat } from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
 import { ChatSidebar } from "./ChatSidebar";
@@ -37,7 +37,9 @@ export function ChatApp() {
     const matchesFilter =
       activeFilter === "all" ||
       (activeFilter === "groups" && chat.type === "GROUP") ||
-      (activeFilter === "unread" && chat.lastMessage);
+      (activeFilter === "unread" &&
+        user &&
+        !chat.lastMessage?.seenBy?.includes(user?._id));
 
     return matchesSearch && matchesFilter;
   });
