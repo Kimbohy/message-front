@@ -60,7 +60,7 @@ export function SignIn({
             <span className="text-2xl md:text-3xl">💬</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-light text-wp-text-primary mb-2">
-            Welcome to WhatsApp
+            Welcome to WhatApp
           </h1>
           <p className="text-sm md:text-base text-wp-text-secondary px-4">
             Sign in to continue to your account

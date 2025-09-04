@@ -7,8 +7,8 @@ import { apiService } from "../../services/api";
 interface SidebarHeaderProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  activeFilter: "all" | "unread" | "favourites" | "groups";
-  onFilterChange: (filter: "all" | "unread" | "favourites" | "groups") => void;
+  activeFilter: "all" | "unread" | "favorites" | "groups";
+  onFilterChange: (filter: "all" | "unread" | "favorites" | "groups") => void;
   onChatStarted?: () => void;
 }
 
@@ -56,7 +56,7 @@ export function SidebarHeader({
       {/* Main Header */}
       <div className="h-[60px] flex items-center justify-between px-4 text-wp-text-primary">
         <div>
-          <h1 className="font-medium text-[19px]">WhatsApp</h1>
+          <h1 className="font-medium text-[19px]">WhatApp</h1>
           {user && (
             <p className="text-[12px] text-wp-text-secondary">
               {user.name} ({user.email})
@@ -114,21 +114,19 @@ export function SidebarHeader({
       {/* Filter Tabs */}
       <div className="px-3 pb-2">
         <div className="flex gap-0.5">
-          {(["All", "Unread", "Favourites", "Groups"] as const).map(
-            (filter) => (
-              <button
-                key={filter}
-                onClick={() => onFilterChange(filter.toLowerCase() as any)}
-                className={`px-3 py-1.5 text-[13px] font-medium rounded-full transition-all duration-200 ${
-                  activeFilter === filter.toLowerCase()
-                    ? "bg-wp-green text-white"
-                    : "text-wp-text-secondary hover:bg-wp-hover"
-                }`}
-              >
-                {filter}
-              </button>
-            )
-          )}
+          {(["All", "Unread", "favorites", "Groups"] as const).map((filter) => (
+            <button
+              key={filter}
+              onClick={() => onFilterChange(filter.toLowerCase() as any)}
+              className={`px-3 py-1.5 text-[13px] font-medium rounded-full transition-all duration-200 ${
+                activeFilter === filter.toLowerCase()
+                  ? "bg-wp-green text-white"
+                  : "text-wp-text-secondary hover:bg-wp-hover"
+              }`}
+            >
+              {filter}
+            </button>
+          ))}
         </div>
       </div>
 

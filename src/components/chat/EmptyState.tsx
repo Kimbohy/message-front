@@ -6,7 +6,7 @@ export function EmptyState() {
           <span className="text-4xl md:text-6xl">💬</span>
         </div>
         <h2 className="text-xl md:text-2xl font-light mb-3 text-wp-text-primary">
-          WhatsApp Web
+          WhatApp Web
         </h2>
         <p className="text-sm text-wp-text-secondary mx-auto px-4">
           A clone of the popular messaging app.

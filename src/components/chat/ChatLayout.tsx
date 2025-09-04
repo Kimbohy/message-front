@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useChat } from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
 import { ChatSidebar } from "./ChatSidebar";
@@ -20,8 +20,9 @@ export function ChatApp() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<
-    "all" | "unread" | "favourites" | "groups"
+    "all" | "unread" | "favorites" | "groups"
   >("all");
+  console.log("chats: ", chats);
 
   // Filter chats based on search and active filter
   const filteredChats = chats.filter((chat) => {

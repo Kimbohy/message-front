@@ -8,8 +8,8 @@ interface ChatSidebarProps {
   activeChatId: string;
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  activeFilter: "all" | "unread" | "favourites" | "groups";
-  onFilterChange: (filter: "all" | "unread" | "favourites" | "groups") => void;
+  activeFilter: "all" | "unread" | "favorites" | "groups";
+  onFilterChange: (filter: "all" | "unread" | "favorites" | "groups") => void;
   onChatSelect: (chatId: string) => void;
   onChatStarted?: () => void;
   isLoading?: boolean;
