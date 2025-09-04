@@ -80,13 +80,7 @@ export interface StartChatByEmailRequest {
 
 export interface StartChatByEmailResponse {
   success: boolean;
-  chat: {
-    _id: string;
-    type: "GROUP" | "PRIVATE";
-    participants: string[];
-    createdAt: string;
-    updatedAt: string;
-  };
+  chat: Chat;
   message: string;
 }
 
@@ -191,8 +185,8 @@ class ApiService {
     return this.request<Chat[]>("/chat");
   }
 
-  async createChat(chatData: CreateChatRequest): Promise<any> {
-    return this.request("/chat", {
+  async createChat(chatData: CreateChatRequest): Promise<Chat> {
+    return this.request<Chat>("/chat", {
       method: "POST",
       body: JSON.stringify(chatData),
     });

@@ -13,7 +13,7 @@ export function ChatApp() {
     error,
     setActiveChat,
     sendMessage,
-    loadChats,
+    addChat,
     clearError,
   } = useChat();
   const { user } = useAuth();
@@ -101,7 +101,14 @@ export function ChatApp() {
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
           onChatSelect={handleChatSelect}
-          onChatStarted={loadChats}
+          onChatStarted={(chat) => {
+            if (chat) {
+              // Add the chat from HTTP response
+              addChat(chat);
+              // Then set it as active
+              setActiveChat(chat._id);
+            }
+          }}
           isLoading={isLoading}
         />
       </div>

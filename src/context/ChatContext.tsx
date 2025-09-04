@@ -57,13 +57,30 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
     case "SET_CHATS":
       return { ...state, chats: action.payload, isLoading: false };
     case "ADD_CHAT":
-      return {
-        ...state,
-        chats: [action.payload, ...state.chats].sort(
-          (a, b) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-        ),
-      };
+      const existingIndex = state.chats.findIndex(
+        (chat) => chat._id === action.payload._id
+      );
+      if (existingIndex >= 0) {
+        // Update existing chat
+        const updatedChats = [...state.chats];
+        updatedChats[existingIndex] = action.payload;
+        return {
+          ...state,
+          chats: updatedChats.sort(
+            (a, b) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          ),
+        };
+      } else {
+        // Add new chat
+        return {
+          ...state,
+          chats: [action.payload, ...state.chats].sort(
+            (a, b) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          ),
+        };
+      }
     case "UPDATE_CHAT": {
       const { chatId, lastMessage, updatedAt } = action.payload;
       return {
@@ -163,6 +180,7 @@ interface ChatContextType extends ChatState {
     type: "GROUP" | "PRIVATE",
     name?: string
   ) => Promise<void>;
+  addChat: (chat: Chat) => void;
   clearError: () => void;
 }
 
@@ -304,8 +322,10 @@ export function ChatProvider({ children }: ChatProviderProps) {
     ) => {
       try {
         dispatch({ type: "SET_LOADING", payload: true });
-        await apiService.createChat({ participants, type, name });
-        // The chat will be added via socket event
+        const chat = await apiService.createChat({ participants, type, name });
+        // Add the chat and set as active
+        dispatch({ type: "ADD_CHAT", payload: chat });
+        dispatch({ type: "SET_ACTIVE_CHAT", payload: chat._id });
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Failed to create chat";
@@ -317,8 +337,8 @@ export function ChatProvider({ children }: ChatProviderProps) {
     []
   );
 
-  const clearError = useCallback(() => {
-    dispatch({ type: "SET_ERROR", payload: null });
+  const addChat = useCallback((chat: Chat) => {
+    dispatch({ type: "ADD_CHAT", payload: chat });
   }, []);
 
   // Connect socket when authenticated
@@ -335,6 +355,10 @@ export function ChatProvider({ children }: ChatProviderProps) {
     };
   }, [isAuthenticated, connectSocket, disconnectSocket]);
 
+  const clearError = useCallback(() => {
+    dispatch({ type: "SET_ERROR", payload: null });
+  }, []);
+
   const contextValue: ChatContextType = {
     ...state,
     connectSocket,
@@ -344,6 +368,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
     setActiveChat,
     sendMessage,
     createChat,
+    addChat,
     clearError,
   };
 

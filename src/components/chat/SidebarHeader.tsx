@@ -3,13 +3,14 @@ import { useAuth } from "../../context/AuthContext";
 import { useState } from "react";
 import { StartChatModal } from "./StartChatModal";
 import { apiService } from "../../services/api";
+import type { Chat } from "../../services/api";
 
 interface SidebarHeaderProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   activeFilter: "all" | "unread" | "favorites" | "groups";
   onFilterChange: (filter: "all" | "unread" | "favorites" | "groups") => void;
-  onChatStarted?: () => void;
+  onChatStarted?: (chat?: Chat) => void;
 }
 
 export function SidebarHeader({
@@ -36,13 +37,13 @@ export function SidebarHeader({
   const handleStartChat = async (email: string, message?: string) => {
     setIsStartingChat(true);
     try {
-      await apiService.startChatByEmail({
+      const response = await apiService.startChatByEmail({
         recipientEmail: email,
         initialMessage: message,
       });
 
-      // Notify parent component to refresh chat list
-      onChatStarted?.();
+      // Notify parent component with the new chat
+      onChatStarted?.(response.chat);
     } catch (error: any) {
       console.error("Failed to start chat:", error);
       throw error; // Re-throw to let modal handle the error display

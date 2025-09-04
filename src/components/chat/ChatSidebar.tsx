@@ -11,7 +11,7 @@ interface ChatSidebarProps {
   activeFilter: "all" | "unread" | "favorites" | "groups";
   onFilterChange: (filter: "all" | "unread" | "favorites" | "groups") => void;
   onChatSelect: (chatId: string) => void;
-  onChatStarted?: () => void;
+  onChatStarted?: (chat?: Chat) => void;
   isLoading?: boolean;
 }
 
