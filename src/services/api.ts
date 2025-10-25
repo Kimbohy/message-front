@@ -1,112 +1,72 @@
-// Get the current host and use it for API calls
-const getApiBaseUrl = () => {
+import { API_ENDPOINTS } from "../constants";
+import type {
+  LoginCredentials,
+  RegisterData,
+  AuthResponse,
+  User,
+  Chat,
+  Message,
+  CreateChatPayload,
+} from "../types";
+
+/**
+ * Get API base URL based on environment
+ */
+const getApiBaseUrl = (): string => {
   if (typeof window !== "undefined") {
     const { protocol, hostname } = window.location;
-    // Use the same host as the frontend but port 3001 for API
     return `${protocol}//${hostname}:3001/api`;
   }
-  // Fallback for SSR or other environments
   return "http://localhost:3001/api";
 };
 
-const API_BASE_URL = getApiBaseUrl();
-
-export interface ApiResponse<T = any> {
-  data?: T;
-  message?: string;
-  error?: string;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  name: string;
-}
-
-export interface User {
-  _id: string;
-  email: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface AuthResponse {
-  message: string;
-  user: User;
-  accessToken: string;
-}
-
-export interface Chat {
-  _id: string;
-  type: "GROUP" | "PRIVATE";
-  name?: string;
-  participants: User[];
-  lastMessage?: {
-    content: string;
-    senderId: string;
-    createdAt: string;
-    updatedAt: string;
-    seenBy?: string[]; // Array of user IDs who have seen the last message
-  };
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Message {
-  _id: string;
-  chatId: string;
-  senderId: string;
-  content: string;
-  createdAt: string;
-  seenBy?: string[]; // Array of user IDs who have seen the message
-}
-
-export interface CreateChatRequest {
-  participants: string[];
-  type: "GROUP" | "PRIVATE";
-  name?: string;
-}
-
-export interface StartChatByEmailRequest {
-  recipientEmail: string;
-  initialMessage?: string;
-}
-
-export interface StartChatByEmailResponse {
-  success: boolean;
-  chat: Chat;
-  message: string;
-}
-
+/**
+ * ApiService
+ * Handles all HTTP REST API communications
+ * Manages authentication tokens and request/response handling
+ */
 class ApiService {
-  private baseUrl = API_BASE_URL;
+  private baseUrl = getApiBaseUrl();
   private token: string | null = null;
+  private readonly TOKEN_KEY = "auth_token";
 
   constructor() {
     // Load token from localStorage if available
-    this.token = localStorage.getItem("auth_token");
+    if (typeof window !== "undefined") {
+      this.token = localStorage.getItem(this.TOKEN_KEY);
+    }
   }
 
-  setToken(token: string) {
+  /**
+   * Set authentication token
+   */
+  setToken(token: string): void {
     this.token = token;
-    localStorage.setItem("auth_token", token);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(this.TOKEN_KEY, token);
+    }
   }
 
-  clearToken() {
+  /**
+   * Clear authentication token
+   */
+  clearToken(): void {
     this.token = null;
-    localStorage.removeItem("auth_token");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(this.TOKEN_KEY);
+    }
   }
 
-  getToken() {
+  /**
+   * Get current authentication token
+   */
+  getToken(): string | null {
     return this.token;
   }
 
+  /**
+   * Generic HTTP request handler
+   */
   private async request<T = any>(
     endpoint: string,
     options: RequestInit = {}
@@ -140,17 +100,24 @@ class ApiService {
 
       return await response.json();
     } catch (error) {
-      console.error("API request failed:", error);
+      console.error(`API request failed [${endpoint}]:`, error);
       throw error;
     }
   }
 
-  // Auth endpoints
-  async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const response = await this.request<AuthResponse>("/auth/login", {
-      method: "POST",
-      body: JSON.stringify(credentials),
-    });
+  // ==================== Authentication ====================
+
+  /**
+   * Login user
+   */
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    const response = await this.request<AuthResponse>(
+      API_ENDPOINTS.AUTH.LOGIN,
+      {
+        method: "POST",
+        body: JSON.stringify(credentials),
+      }
+    );
 
     if (response.accessToken) {
       this.setToken(response.accessToken);
@@ -159,50 +126,63 @@ class ApiService {
     return response;
   }
 
+  /**
+   * Register new user
+   */
   async register(
-    userData: RegisterRequest
+    userData: RegisterData
   ): Promise<{ message: string; user: User }> {
-    return this.request("/auth/register", {
+    return this.request(API_ENDPOINTS.AUTH.REGISTER, {
       method: "POST",
       body: JSON.stringify(userData),
     });
   }
 
+  /**
+   * Logout user
+   */
   async logout(): Promise<{ message: string }> {
-    const response = await this.request<{ message: string }>("/auth/logout", {
-      method: "POST",
-    });
+    const response = await this.request<{ message: string }>(
+      API_ENDPOINTS.AUTH.LOGOUT,
+      {
+        method: "POST",
+      }
+    );
     this.clearToken();
     return response;
   }
 
+  /**
+   * Get current user profile
+   */
   async getProfile(): Promise<User> {
-    return this.request<User>("/auth/profile");
+    return this.request<User>(API_ENDPOINTS.AUTH.PROFILE);
   }
 
-  // Chat endpoints
+  // ==================== Chat ====================
+
+  /**
+   * Get all chats for authenticated user
+   */
   async getChats(): Promise<Chat[]> {
-    return this.request<Chat[]>("/chat");
+    return this.request<Chat[]>(API_ENDPOINTS.CHAT.LIST);
   }
 
-  async createChat(chatData: CreateChatRequest): Promise<Chat> {
-    return this.request<Chat>("/chat", {
+  /**
+   * Create a new chat
+   */
+  async createChat(chatData: CreateChatPayload): Promise<Chat> {
+    return this.request<Chat>(API_ENDPOINTS.CHAT.CREATE, {
       method: "POST",
       body: JSON.stringify(chatData),
     });
   }
 
+  /**
+   * Get messages for a specific chat
+   */
   async getMessages(chatId: string): Promise<Message[]> {
-    return this.request<Message[]>(`/chat/${chatId}/messages`);
-  }
-
-  async startChatByEmail(
-    data: StartChatByEmailRequest
-  ): Promise<StartChatByEmailResponse> {
-    return this.request<StartChatByEmailResponse>("/chat/start-by-email", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    return this.request<Message[]>(API_ENDPOINTS.CHAT.MESSAGES(chatId));
   }
 }
 
