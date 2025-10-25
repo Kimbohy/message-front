@@ -184,6 +184,49 @@ class ApiService {
   async getMessages(chatId: string): Promise<Message[]> {
     return this.request<Message[]>(API_ENDPOINTS.CHAT.MESSAGES(chatId));
   }
+
+  /**
+   * Start a chat by email (via WebSocket)
+   * This wraps the WebSocket call to provide a Promise-based interface
+   */
+  async startChatByEmail(payload: {
+    recipientEmail: string;
+    initialMessage?: string;
+  }): Promise<{ chat: Chat }> {
+    // Import socketService dynamically to avoid circular dependency
+    const { socketService } = await import("./socket");
+
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error("Chat creation timeout"));
+      }, 10000); // 10 second timeout
+
+      // Listen for chat created event
+      const handleChatCreated = (chat: Chat) => {
+        clearTimeout(timeout);
+        socketService.off({ onChatCreated: handleChatCreated });
+        socketService.off({ onError: handleError });
+        resolve({ chat });
+      };
+
+      // Listen for error event
+      const handleError = (error: { message: string }) => {
+        clearTimeout(timeout);
+        socketService.off({ onChatCreated: handleChatCreated });
+        socketService.off({ onError: handleError });
+        reject(new Error(error.message));
+      };
+
+      // Register event handlers
+      socketService.on({
+        onChatCreated: handleChatCreated,
+        onError: handleError,
+      });
+
+      // Emit the start chat event
+      socketService.startChatByEmail(payload);
+    });
+  }
 }
 
 export const apiService = new ApiService();

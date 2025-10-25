@@ -158,6 +158,51 @@ class SocketService {
   }
 
   /**
+   * Convenience methods for individual event listeners
+   */
+  onMessage(handler: (message: SocketMessage) => void): void {
+    if (this.socket) {
+      this.socket.on(SOCKET_EVENTS.MESSAGE, handler);
+    }
+  }
+
+  onChatUpdated(handler: (update: ChatUpdateEvent) => void): void {
+    if (this.socket) {
+      this.socket.on(SOCKET_EVENTS.CHAT_UPDATED, handler);
+    }
+  }
+
+  onChatCreated(handler: (chat: Chat) => void): void {
+    if (this.socket) {
+      this.socket.on(SOCKET_EVENTS.CHAT_CREATED, handler);
+    }
+  }
+
+  onChatListInitial(handler: (chats: Chat[]) => void): void {
+    if (this.socket) {
+      this.socket.on(SOCKET_EVENTS.CHAT_LIST_INITIAL, handler);
+    }
+  }
+
+  onChatJoined(handler: (event: ChatJoinedEvent) => void): void {
+    if (this.socket) {
+      this.socket.on(SOCKET_EVENTS.CHAT_JOINED, handler);
+    }
+  }
+
+  onChatLeft(handler: (event: ChatLeftEvent) => void): void {
+    if (this.socket) {
+      this.socket.on(SOCKET_EVENTS.CHAT_LEFT, handler);
+    }
+  }
+
+  onError(handler: (error: SocketErrorEvent) => void): void {
+    if (this.socket) {
+      this.socket.on(SOCKET_EVENTS.ERROR, handler);
+    }
+  }
+
+  /**
    * Remove event handlers
    */
   off(handlers: SocketEventHandlers): void {
